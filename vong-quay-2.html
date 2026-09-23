@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎡 Vòng quay chọn thứ tự báo cáo – CN Lâm nghiệp – Thủy sản 12</title>
+<meta name="description" content="Vòng quay may mắn chọn thứ tự nhóm báo cáo Chuyên đề Công nghệ Lâm nghiệp – Thủy sản 12. Gửi link cho học sinh, quay và chia sẻ kết quả ngay vào nhóm chat.">
+<meta name="theme-color" content="#4f46e5">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎡</text></svg>">
+<style>
+    * { box-sizing: border-box; }
+    body {
+        margin: 0;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+        background: linear-gradient(160deg, #eef2ff 0%, #fdf2f8 100%);
+        min-height: 100vh;
+        color: #1f2937;
+    }
+    .page { max-width: 980px; margin: 0 auto; padding: 16px 12px 40px; }
+    .card {
+        background: #fff;
+        border-radius: 24px;
+        box-shadow: 0 20px 60px rgba(31, 41, 55, .12);
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: 1fr;
+        max-width: 520px;
+        margin: 0 auto;
+    }
+    @media (min-width: 900px) { .card { max-width: 960px; grid-template-columns: 1.15fr 1fr; } }
+
+    .left {
+        padding: 26px 20px 30px;
+        display: flex; flex-direction: column; align-items: center;
+        background: linear-gradient(180deg, #f8faff, #eef2ff);
+        text-align: center;
+    }
+    .badge {
+        display: inline-block; background: #e0e7ff; color: #4338ca;
+        font-weight: 700; font-size: .8rem; padding: 6px 14px; border-radius: 999px;
+    }
+    h1 { font-size: 1.35rem; margin: 12px 0 4px; line-height: 1.3; }
+    @media (min-width: 900px) { h1 { font-size: 1.55rem; } }
+    .subtitle { color: #6b7280; font-size: .92rem; margin: 0; }
+
+    .wheel-wrap {
+        position: relative;
+        width: min(86vw, 400px);
+        aspect-ratio: 1 / 1;
+        margin: 20px auto 22px;
+    }
+    #wheel {
+        width: 100%; height: 100%; display: block; border-radius: 50%;
+        box-shadow: 0 12px 30px rgba(31, 41, 55, .18), 0 0 0 8px #fff, 0 0 0 10px #e5e7eb;
+        will-change: transform;
+    }
+    .pointer {
+        position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+        width: 0; height: 0; z-index: 5;
+        border-left: 15px solid transparent; border-right: 15px solid transparent;
+        border-top: 30px solid #ef4444;
+        filter: drop-shadow(0 3px 3px rgba(0, 0, 0, .3));
+    }
+
+    button { touch-action: manipulation; font-family: inherit; }
+    .btn-primary {
+        border: 0; cursor: pointer; color: #fff; font-weight: 800;
+        letter-spacing: .1em; font-size: 1.05rem;
+        padding: 15px 46px; border-radius: 999px;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        box-shadow: 0 10px 24px rgba(99, 102, 241, .35);
+        transition: transform .15s, box-shadow .15s, opacity .15s;
+    }
+    .btn-primary:hover { box-shadow: 0 12px 28px rgba(99, 102, 241, .45); }
+    .btn-primary:active { transform: scale(.96); }
+    .btn-primary:disabled { opacity: .55; cursor: not-allowed; box-shadow: none; }
+
+    .small-actions { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; justify-content: center; }
+    .btn-ghost {
+        background: #fff; border: 1px solid #e5e7eb; border-radius: 999px;
+        padding: 9px 16px; font-size: .85rem; color: #374151; cursor: pointer;
+        display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-ghost:hover { background: #f9fafb; }
+    .hint { color: #9ca3af; font-size: .78rem; margin: 14px 0 0; }
+
+    .right { padding: 22px; border-top: 1px solid #eef0f4; display: flex; flex-direction: column; }
+    @media (min-width: 900px) { .right { border-top: 0; border-left: 1px solid #eef0f4; } }
+    .right-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+    h2 { font-size: 1.1rem; margin: 0; }
+    .progress { color: #6b7280; font-size: .82rem; white-space: nowrap; }
+
+    #resultsList {
+        list-style: none; margin: 14px 0 0; padding: 2px;
+        display: flex; flex-direction: column; gap: 10px;
+        overflow-y: auto; flex: 1; min-height: 140px; max-height: 46vh;
+    }
+    #resultsList li {
+        display: flex; align-items: center; gap: 12px;
+        background: #f8fafc; border: 1px solid #eef0f4; border-radius: 14px;
+        padding: 10px 14px; animation: fadeIn .45s ease-out;
+    }
+    .rank {
+        width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+        color: #fff; font-weight: 800; font-size: .85rem;
+        display: flex; align-items: center; justify-content: center;
+    }
+    .name { font-weight: 600; }
+    .new-tag {
+        margin-left: auto; flex-shrink: 0; font-size: .7rem; font-weight: 600;
+        background: #dcfce7; color: #15803d; padding: 3px 9px; border-radius: 999px;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    #emptyState { color: #9ca3af; text-align: center; font-style: italic; padding: 34px 10px; font-size: .95rem; }
+
+    .right-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+    .btn-share {
+        flex: 1; min-width: 170px; border: 0; cursor: pointer; color: #fff;
+        font-weight: 700; font-size: .92rem; padding: 12px 18px; border-radius: 12px;
+        background: linear-gradient(135deg, #10b981, #059669);
+        box-shadow: 0 8px 18px rgba(16, 185, 129, .3);
+    }
+    .btn-share:active { transform: scale(.97); }
+    .btn-share:disabled, .btn-export:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-export {
+        border: 1px solid #e5e7eb; background: #fff; color: #374151; cursor: pointer;
+        font-weight: 600; font-size: .88rem; padding: 12px 16px; border-radius: 12px;
+    }
+    .note { color: #9ca3af; font-size: .75rem; margin: 12px 0 0; line-height: 1.5; }
+
+    .modal-overlay {
+        position: fixed; inset: 0; z-index: 50; padding: 16px;
+        background: rgba(17, 24, 39, .55);
+        display: flex; align-items: center; justify-content: center;
+        opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .25s, visibility .25s;
+    }
+    .modal-overlay.show { opacity: 1; visibility: visible; pointer-events: auto; }
+    .modal {
+        background: #fff; border-radius: 24px; padding: 30px 26px; max-width: 340px; width: 100%;
+        text-align: center; box-shadow: 0 30px 80px rgba(0, 0, 0, .3);
+        transform: scale(.9) translateY(12px); transition: transform .25s;
+    }
+    .modal-overlay.show .modal { transform: scale(1) translateY(0); }
+    .modal-emoji { font-size: 3rem; }
+    #modalRank { margin: 8px 0 2px; color: #6b7280; font-size: .95rem; font-weight: 600; }
+    #winnerText { font-size: 1.7rem; font-weight: 800; color: #4f46e5; margin: .25em 0 1.1em; }
+    .btn-modal {
+        width: 100%; border: 0; cursor: pointer; color: #fff; font-weight: 700;
+        padding: 12px; border-radius: 12px; font-size: 1rem;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    }
+
+    #toast {
+        position: fixed; left: 50%; bottom: 24px; z-index: 70; pointer-events: none;
+        transform: translateX(-50%) translateY(20px);
+        background: #111827; color: #fff; padding: 10px 18px; border-radius: 999px;
+        font-size: .9rem; opacity: 0; transition: all .3s; max-width: 90vw;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    #confetti { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 60; }
+    .confetti-piece {
+        position: absolute; top: -20px; width: 9px; height: 14px;
+        animation: fall linear forwards;
+    }
+    @keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
+</style>
+</head>
+<body>
+<div class="page">
+    <div class="card">
+        <section class="left">
+            <span class="badge">🎡 Vòng quay may mắn</span>
+            <h1>Vòng Quay Chọn Thứ Tự Báo Cáo</h1>
+            <p class="subtitle" id="subtitle"></p>
+
+            <div class="wheel-wrap">
+                <canvas id="wheel" width="800" height="800"></canvas>
+                <div class="pointer"></div>
+            </div>
+
+            <button id="spinBtn" class="btn-primary">QUAY NGAY</button>
+            <div class="small-actions">
+                <button id="soundBtn" class="btn-ghost">🔊 Âm thanh</button>
+                <button id="resetBtn" class="btn-ghost">↺ Làm mới</button>
+            </div>
+            <p class="hint">Mẹo: khi trình chiếu, nhấn phím Space để quay</p>
+        </section>
+
+        <section class="right">
+            <div class="right-head">
+                <h2>🏆 Thứ tự báo cáo</h2>
+                <span class="progress" id="progressText"></span>
+            </div>
+            <ol id="resultsList"></ol>
+            <div id="emptyState">Chưa có nhóm nào được chọn.<br>Hãy quay để bắt đầu!</div>
+            <div class="right-actions">
+                <button id="shareBtn" class="btn-share" disabled>📤 Chia sẻ kết quả</button>
+                <button id="exportBtn" class="btn-export" disabled>⬇ Tải CSV</button>
+            </div>
+            <p class="note">Kết quả được lưu tự động trên máy bạn (tải lại trang không mất). Nhấn “Làm mới” để quay lại từ đầu.</p>
+        </section>
+    </div>
+</div>
+
+<div id="resultModal" class="modal-overlay">
+    <div class="modal">
+        <div class="modal-emoji">🎉</div>
+        <p id="modalRank">Lượt thứ 1</p>
+        <p id="winnerText">Nhóm 1</p>
+        <button id="closeModalBtn" class="btn-modal">Tiếp tục</button>
+    </div>
+</div>
+<div id="toast"></div>
+<div id="confetti"></div>
+
+<script>
+// ===================== TUỲ CHỈNH TẠI ĐÂY =====================
+// Sửa tên bài ở dòng dưới và danh sách nhóm cho đúng lớp của mình,
+// lưu file lại là xong (dùng Notepad mở file này để sửa).
+const TEN_BAI = "Chuyên đề Công nghệ Lâm nghiệp – Thủy sản 12 – HK1";
+const DANH_SACH_NHOM = [
+    "Nhóm 1", "Nhóm 2", "Nhóm 3", "Nhóm 4",
+    "Nhóm 5", "Nhóm 6", "Nhóm 7", "Nhóm 8"
+];
+// =============================================================
+
+const PALETTE = ["#ef4444","#f59e0b","#22c55e","#0ea5e9","#8b5cf6","#ec4899","#14b8a6","#f97316"];
+const STORAGE_KEY = "vongquay_lnts12_v1";
+const SPIN_MS = 4200;      // thời gian quay (ms)
+const EXTRA_TURNS = 5;     // số vòng quay tối thiểu
+
+const canvas = document.getElementById("wheel");
+const ctx = canvas.getContext("2d");
+const spinBtn = document.getElementById("spinBtn");
+const resetBtn = document.getElementById("resetBtn");
+const soundBtn = document.getElementById("soundBtn");
+const list = document.getElementById("resultsList");
+const emptyState = document.getElementById("emptyState");
+const progressText = document.getElementById("progressText");
+const shareBtn = document.getElementById("shareBtn");
+const exportBtn = document.getElementById("exportBtn");
+const overlay = document.getElementById("resultModal");
+const modalRank = document.getElementById("modalRank");
+const winnerText = document.getElementById("winnerText");
+const closeModalBtn = document.getElementById("closeModalBtn");
+
+let groups = [...DANH_SACH_NHOM];
+let order = [];        // thứ tự đã quay
+let rotation = 0;      // góc quay hiện tại (độ)
+let spinning = false;
+let soundOn = true;
+let audioCtx = null;
+
+/* ---------- Âm thanh (tự sinh, không cần file) ---------- */
+function ensureAudio() {
+    if (!audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
+    if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+}
+let lastTickAt = 0;
+function tick() {
+    if (!soundOn || !audioCtx || audioCtx.state !== "running") return;
+    const now = performance.now();
+    if (now - lastTickAt < 30) return;
+    lastTickAt = now;
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.type = "square"; o.frequency.value = 850 + Math.random() * 250;
+    g.gain.setValueAtTime(0.06, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.05);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(); o.stop(audioCtx.currentTime + 0.06);
+}
+function fanfare() {
+    if (!soundOn || !audioCtx || audioCtx.state !== "running") return;
+    [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => {
+        const t = audioCtx.currentTime + i * 0.12;
+        const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.type = "triangle"; o.frequency.value = f;
+        g.gain.setValueAtTime(0.12, t);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.35);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(t); o.stop(t + 0.4);
+    });
+}
+
+/* ---------- Vẽ vòng quay ---------- */
+function sliceColor(i, n) {
+    return n <= PALETTE.length ? PALETTE[i % PALETTE.length] : `hsl(${(i * 137.5) % 360} 68% 52%)`;
+}
+function drawWheel() {
+    const W = canvas.width, R = W / 2 - 10, cx = W / 2, cy = W / 2;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, W, W);
+    const n = groups.length;
+
+    if (n === 0) {
+        ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2);
+        ctx.fillStyle = "#e5e7eb"; ctx.fill();
+        ctx.fillStyle = "#6b7280";
+        ctx.font = "bold 42px system-ui, sans-serif";
+        ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        ctx.fillText("Đã chọn xong! 🎉", cx, cy);
+        return;
+    }
+
+    const delta = (Math.PI * 2) / n;
+    for (let i = 0; i < n; i++) {
+        const a0 = i * delta, a1 = a0 + delta;
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, R, a0, a1); ctx.closePath();
+        ctx.fillStyle = sliceColor(i, n); ctx.fill();
+        ctx.lineWidth = 3; ctx.strokeStyle = "#ffffff"; ctx.stroke();
+
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(a0 + delta / 2);
+        let fs = 52; if (n > 10) fs = 40; if (n > 14) fs = 32; if (n > 18) fs = 26;
+        ctx.font = `800 ${fs}px system-ui, sans-serif`;
+        ctx.fillStyle = "#fff";
+        ctx.textAlign = "right"; ctx.textBaseline = "middle";
+        ctx.shadowColor = "rgba(0,0,0,.45)"; ctx.shadowBlur = 6;
+        ctx.shadowOffsetX = 1; ctx.shadowOffsetY = 2;
+        ctx.fillText(groups[i], R - 28, 0, R * 0.62);
+        ctx.restore();
+    }
+
+    // viền ngoài + tâm
+    ctx.beginPath(); ctx.arc(cx, cy, R - 4, 0, Math.PI * 2);
+    ctx.lineWidth = 8; ctx.strokeStyle = "#1f2937"; ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx, cy, 44, 0, Math.PI * 2);
+    ctx.fillStyle = "#fff"; ctx.fill();
+    ctx.lineWidth = 6; ctx.strokeStyle = "#1f2937"; ctx.stroke();
+}
+
+/* ---------- Quay: chọn trước kết quả rồi tính góc dừng ----------
+   Mũi tên nằm ở đỉnh (270°). Để ô của nhóm trúng dừng đúng dưới mũi tên,
+   ta tính góc quay sao cho tâm ô đó (cộng thêm chút ngẫu nhiên) trùng 270°. */
+function spin() {
+    if (spinning || groups.length === 0) return;
+    spinning = true;
+    updateButtons();
+    ensureAudio();
+
+    const n = groups.length, delta = 360 / n;
+    const winnerIndex = Math.floor(Math.random() * n);
+    const jitter = (Math.random() - 0.5) * delta * 0.55;
+    const center = winnerIndex * delta + delta / 2 + jitter;
+    const targetMod = ((270 - center) % 360 + 360) % 360;
+    const minRotation = rotation + 360 * EXTRA_TURNS;
+    const k = Math.ceil((minRotation - targetMod) / 360);
+    const finalRotation = targetMod + 360 * k;
+    const startRotation = rotation;
+    const t0 = performance.now();
+    let lastIdx = -1;
+
+    function frame(now) {
+        const t = Math.min(1, (now - t0) / SPIN_MS);
+        const eased = 1 - Math.pow(1 - t, 3);
+        rotation = startRotation + (finalRotation - startRotation) * eased;
+        canvas.style.transform = `rotate(${rotation}deg)`;
+        const at = ((270 - rotation) % 360 + 360) % 360;
+        const idx = Math.floor(at / delta) % n;
+        if (idx !== lastIdx) { lastIdx = idx; tick(); }
+        if (t < 1) requestAnimationFrame(frame);
+        else onWin(winnerIndex);
+    }
+    requestAnimationFrame(frame);
+}
+
+function onWin(idx) {
+    spinning = false;
+    const name = groups[idx];
+    order.push(name);
+    groups.splice(idx, 1);
+    saveState();
+    fanfare();
+    burst();
+    modalRank.textContent = `Lượt thứ ${order.length}`;
+    winnerText.textContent = name;
+    overlay.classList.add("show");
+    renderList();
+    updateButtons();
+}
+
+function closeModal() {
+    overlay.classList.remove("show");
+    setTimeout(drawWheel, 250);
+}
+
+/* ---------- Danh sách kết quả ---------- */
+function renderList() {
+    if (order.length === 0) {
+        list.innerHTML = "";
+        emptyState.style.display = "block";
+        return;
+    }
+    emptyState.style.display = "none";
+    list.innerHTML = "";
+    order.forEach((name, i) => {
+        const li = document.createElement("li");
+        li.innerHTML = `<span class="rank" style="background:${sliceColor(i, DANH_SACH_NHOM.length)}">${i + 1}</span><span class="name"></span>`;
+        li.querySelector(".name").textContent = name;
+        if (i === order.length - 1) {
+            const tag = document.createElement("span");
+            tag.className = "new-tag";
+            tag.textContent = "Mới nhất";
+            li.appendChild(tag);
+        }
+        list.appendChild(li);
+    });
+    list.scrollTop = list.scrollHeight;
+}
+
+function updateButtons() {
+    spinBtn.disabled = spinning || groups.length === 0;
+    spinBtn.textContent = (!spinning && groups.length === 0) ? "ĐÃ CHỌN XONG 🎉" : "QUAY NGAY";
+    shareBtn.disabled = order.length === 0;
+    exportBtn.disabled = order.length === 0;
+    progressText.textContent = `Đã quay: ${order.length}/${DANH_SACH_NHOM.length}`;
+}
+
+/* ---------- Lưu / phục hồi trạng thái ---------- */
+function saveState() {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+            groups, order, rotation: Math.round(rotation * 100) / 100
+        }));
+    } catch (e) {}
+}
+function loadState() {
+    try {
+        const s = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+        const valid = s && Array.isArray(s.order) && s.order.length <= DANH_SACH_NHOM.length &&
+            s.order.every(nm => DANH_SACH_NHOM.includes(nm)) &&
+            Array.isArray(s.groups) && s.groups.length === DANH_SACH_NHOM.length - s.order.length;
+        if (valid) {
+            order = s.order;
+            groups = s.groups;
+            if (typeof s.rotation === "number") rotation = s.rotation;
+        }
+    } catch (e) {}
+}
+
+/* ---------- Chia sẻ / Copy / Xuất CSV ---------- */
+function buildShareText() {
+    const lines = order.map((nm, i) => `${i + 1}. ${nm}`).join("\n");
+    return `🎡 KẾT QUẢ VÒNG QUAY – THỨ TỰ BÁO CÁO\n${TEN_BAI}\n\n${lines}`;
+}
+async function shareOrCopy() {
+    if (order.length === 0) return;
+    const text = buildShareText();
+    if (navigator.share) {
+        try { await navigator.share({ title: "Thứ tự báo cáo", text }); return; }
+        catch (e) { if (e && e.name === "AbortError") return; }
+    }
+    try {
+        await navigator.clipboard.writeText(text);
+        toast("Đã copy kết quả – dán vào nhóm chat nhé!");
+    } catch (e) {
+        fallbackCopy(text);
+    }
+}
+function fallbackCopy(text) {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    let ok = false;
+    try { ok = document.execCommand("copy"); } catch (e) {}
+    document.body.removeChild(ta);
+    toast(ok ? "Đã copy kết quả!" : "Không copy được – bạn hãy chụp màn hình nhé");
+}
+
+function exportToExcel() {
+    if (order.length === 0) return;
+    const BOM = "\uFEFF";
+    let csv = "STT,Nhóm,Tên thành viên,Điểm chấm chéo,Điểm báo cáo lần 1\n";
+    order.forEach((nm, i) => { csv += `${i + 1},"${nm}","","",""\n`; });
+    const blob = new Blob([BOM + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "Thu_tu_bao_cao.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+/* ---------- Hiệu ứng phụ ---------- */
+let toastTimer;
+function toast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove("show"), 2200);
+}
+const CONFETTI_COLORS = ["#ef4444", "#f59e0b", "#22c55e", "#0ea5e9", "#8b5cf6", "#ec4899"];
+function burst() {
+    const c = document.getElementById("confetti");
+    for (let i = 0; i < 80; i++) {
+        const p = document.createElement("i");
+        p.className = "confetti-piece";
+        p.style.left = Math.random() * 100 + "vw";
+        p.style.background = CONFETTI_COLORS[i % CONFETTI_COLORS.length];
+        p.style.animationDuration = (1.6 + Math.random() * 1.6) + "s";
+        p.style.animationDelay = (Math.random() * 0.3) + "s";
+        p.style.transform = `rotate(${Math.random() * 360}deg)`;
+        if (i % 3 === 0) p.style.borderRadius = "50%";
+        c.appendChild(p);
+    }
+    setTimeout(() => { c.innerHTML = ""; }, 3600);
+}
+
+/* ---------- Sự kiện ---------- */
+spinBtn.addEventListener("click", spin);
+closeModalBtn.addEventListener("click", closeModal);
+shareBtn.addEventListener("click", shareOrCopy);
+exportBtn.addEventListener("click", exportToExcel);
+soundBtn.addEventListener("click", () => {
+    soundOn = !soundOn;
+    soundBtn.textContent = soundOn ? "🔊 Âm thanh" : "🔇 Đã tắt tiếng";
+});
+resetBtn.addEventListener("click", () => {
+    if (order.length > 0 && !confirm("Xoá kết quả hiện tại và quay lại từ đầu?")) return;
+    groups = [...DANH_SACH_NHOM];
+    order = [];
+    rotation = 0;
+    canvas.style.transform = "rotate(0deg)";
+    saveState();
+    drawWheel();
+    renderList();
+    updateButtons();
+});
+document.addEventListener("keydown", (e) => {
+    if (e.code === "Space" && !overlay.classList.contains("show")) {
+        e.preventDefault();
+        spin();
+    }
+});
+
+/* ---------- Khởi động ---------- */
+document.getElementById("subtitle").textContent = TEN_BAI;
+loadState();
+canvas.style.transform = `rotate(${rotation}deg)`;
+drawWheel();
+renderList();
+updateButtons();
+</script>
+</body>
+</html>

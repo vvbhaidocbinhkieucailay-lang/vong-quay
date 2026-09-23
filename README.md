@@ -3,6 +3,16 @@
 Trang web nhỏ gọn trong **1 file duy nhất** (`index.html`), không cần cài đặt gì,
 không cần mạng mới tải được thư viện (chạy được cả khi mạng trường chậm/chặn CDN).
 
+## Hai vòng quay (mỗi chuyên đề một link riêng)
+
+| Vòng quay | File | Link chia sẻ |
+|---|---|---|
+| Chuyên đề Sinh học 10 – HK1 | `index.html` | https://vvbhaidocbinhkieucailay-lang.github.io/vong-quay/ |
+| Chuyên đề Công nghệ Lâm nghiệp – Thủy sản 12 – HK1 | `vong-quay-2.html` | https://vvbhaidocbinhkieucailay-lang.github.io/vong-quay/vong-quay-2.html |
+
+Hai vòng quay lưu kết quả **riêng biệt** trên từng máy (không ảnh hưởng nhau).
+Mở link nào thì thấy chuyên đề đó; gửi link nào cho lớp đó.
+
 ## Cách chia sẻ cho học sinh
 
 ### Cách 1 – Đưa lên GitHub Pages (khuyên dùng, làm 1 lần rồi dùng mãi)
